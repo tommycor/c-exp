@@ -43367,11 +43367,18 @@ module.exports = {
 		for (var i = 0; i < _utilsConfig2['default'].cylinders.length; i++) {
 			var cylinderConfig = _utilsConfig2['default'].cylinders[i];
 
-			var cylinderGeometry = new THREE.CylinderBufferGeometry(cylinderConfig.width, cylinderConfig.width, cylinderConfig.height, _utilsConfig2['default'].radiusSegments, _utilsConfig2['default'].heightSegments, false);
-			var cylinderMaterial = new THREE.MeshBasicMaterial();
-			var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+			var cylinderGeometry = new THREE.CylinderGeometry(cylinderConfig.width, cylinderConfig.width, cylinderConfig.height, _utilsConfig2['default'].radiusSegments, _utilsConfig2['default'].heightSegments, false);
+			var cylinderMaterial = new THREE.MeshBasicMaterial({
+				vertexColors: THREE.FaceColors
+			});
 
-			console.log('cylinder', cylinder);
+			cylinderGeometry.computeFaceNormals();
+
+			for (var j = 0; j < cylinderGeometry.faces.length; j++) {
+				this.setFaceColor(cylinderGeometry.faces[j]);
+			}
+
+			var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
 
 			this.scene.add(cylinder);
 
@@ -43390,6 +43397,14 @@ module.exports = {
 		window.addEventListener('resize', this.onResize);
 		window.addEventListener('mousemove', this.onMove);
 		window.addEventListener('click', this.onClick);
+	},
+
+	setFaceColor: function setFaceColor(face) {
+		console.log('mwellow', face.normal.dot(new THREE.Vector3(0, 0, 1)));
+
+		if (face.normal.dot(new THREE.Vector3(0, 0, 1)) === 0) {
+			face.color = THREE.Vector3(0, 0, 0);
+		}
 	},
 
 	onClick: function onClick(event) {},
