@@ -43367,9 +43367,11 @@ module.exports = {
 		for (var i = 0; i < _utilsConfig2['default'].cylinders.length; i++) {
 			var cylinderConfig = _utilsConfig2['default'].cylinders[i];
 
-			var cylinderGeometry = new THREE.CylinderBufferGeometry(5, 5, 20, 32);
+			var cylinderGeometry = new THREE.CylinderBufferGeometry(cylinderConfig.width, cylinderConfig.width, cylinderConfig.height, _utilsConfig2['default'].radiusSegments, _utilsConfig2['default'].heightSegments, false);
 			var cylinderMaterial = new THREE.MeshBasicMaterial();
-			var cylinder = new THREE.Mesh(this.cylinderGeometry, this.cylinderMaterial);
+			var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+
+			console.log('cylinder', cylinder);
 
 			this.scene.add(cylinder);
 
@@ -43452,7 +43454,7 @@ var config = {
 
 	canvas: {
 		element: document.getElementById('container'),
-		color: 0xfff8d8
+		color: 0xf4eddf
 	},
 
 	camera: {

@@ -48,9 +48,11 @@ module.exports = {
 		for( let i = 0 ; i < config.cylinders.length ; i++ ) {
 			let cylinderConfig = config.cylinders[i];
 
-			let cylinderGeometry = new THREE.CylinderBufferGeometry( 5, 5, 20, 32 );
+			let cylinderGeometry = new THREE.CylinderBufferGeometry( cylinderConfig.width, cylinderConfig.width, cylinderConfig.height, config.radiusSegments, config.heightSegments, false );
 			let cylinderMaterial = new THREE.MeshBasicMaterial();
-			let cylinder = new THREE.Mesh( this.cylinderGeometry, this.cylinderMaterial );
+			let cylinder = new THREE.Mesh( cylinderGeometry, cylinderMaterial );
+
+			console.log('cylinder', cylinder);
 
 			this.scene.add( cylinder );
 

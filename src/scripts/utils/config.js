@@ -4,7 +4,7 @@ var config = {
 	
 	canvas: {
 		element : document.getElementById('container'),
-		color : 0xfff8d8
+		color : 0xf4eddf
 	},
 
 	camera: {
