@@ -18,6 +18,7 @@ module.exports = {
 		this.plane   	= null;
 		this.composer 	= null;
 		
+		this.cylinders 	= Array();
 		this.scene 	   	= new THREE.Scene();
 		this.container 	= config.canvas.element;
 		this.canvas 	= document.createElement("canvas");
@@ -44,10 +45,18 @@ module.exports = {
 		//// ADD OBJECTS TO SCENE
 		this.scene.add( this.ambient );
 
-		this.cylinderGeometry = new THREE.CylinderBufferGeometry( 5, 5, 20, 32 );
-		this.cylinderMaterial = new THREE.MeshBasicMaterial();
-		this.cylinder = new THREE.Mesh( this.cylinderGeometry, this.cylinderMaterial );
-		this.scene.add( this.cylinder );
+		for( let i = 0 ; i < config.cylinders.length ; i++ ) {
+			let cylinderConfig = config.cylinders[i];
+
+			let cylinderGeometry = new THREE.CylinderBufferGeometry( 5, 5, 20, 32 );
+			let cylinderMaterial = new THREE.MeshBasicMaterial();
+			let cylinder = new THREE.Mesh( this.cylinderGeometry, this.cylinderMaterial );
+
+			this.scene.add( cylinder );
+
+			this.cylinders.push( cylinder );
+
+		}
 
 
 		//// ADD CANVAS TO DOM

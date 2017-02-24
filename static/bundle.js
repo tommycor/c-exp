@@ -43337,6 +43337,7 @@ module.exports = {
 		this.plane = null;
 		this.composer = null;
 
+		this.cylinders = Array();
 		this.scene = new THREE.Scene();
 		this.container = _utilsConfig2['default'].canvas.element;
 		this.canvas = document.createElement("canvas");
@@ -43363,10 +43364,17 @@ module.exports = {
 		//// ADD OBJECTS TO SCENE
 		this.scene.add(this.ambient);
 
-		this.cylinderGeometry = new THREE.CylinderBufferGeometry(5, 5, 20, 32);
-		this.cylinderMaterial = new THREE.MeshBasicMaterial();
-		this.cylinder = new THREE.Mesh(this.cylinderGeometry, this.cylinderMaterial);
-		this.scene.add(this.cylinder);
+		for (var i = 0; i < _utilsConfig2['default'].cylinders.length; i++) {
+			var cylinderConfig = _utilsConfig2['default'].cylinders[i];
+
+			var cylinderGeometry = new THREE.CylinderBufferGeometry(5, 5, 20, 32);
+			var cylinderMaterial = new THREE.MeshBasicMaterial();
+			var cylinder = new THREE.Mesh(this.cylinderGeometry, this.cylinderMaterial);
+
+			this.scene.add(cylinder);
+
+			this.cylinders.push(cylinder);
+		}
 
 		//// ADD CANVAS TO DOM
 		this.container.appendChild(this.renderer.domElement);
@@ -43458,7 +43466,24 @@ var config = {
 		ambient: {
 			color: 0xffffff
 		}
-	}
+	},
+
+	cylinders: [{
+		x: 0,
+		y: 0,
+		z: 0,
+		width: 10,
+		height: 10,
+		depth: 10,
+		rotX: 0,
+		rotY: 0,
+		rotZ: 0,
+		inverted: false
+	}],
+
+	radiusSegments: 10,
+
+	heightSegments: 10
 };
 
 module.exports = config;
