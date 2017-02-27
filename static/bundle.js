@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/tommy.cornilleau/Desktop/TEMP/c-exp/node_modules/three/build/three.js":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"D:\\Documents\\git\\c-exp\\node_modules\\three\\build\\three.js":[function(require,module,exports){
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -43300,7 +43300,7 @@
 
 })));
 
-},{}],"/Users/tommy.cornilleau/Desktop/TEMP/c-exp/src/scripts/components/scene.js":[function(require,module,exports){
+},{}],"D:\\Documents\\git\\c-exp\\src\\scripts\\components\\scene.js":[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -43330,19 +43330,23 @@ module.exports = {
 		this.onResize = this.onResize.bind(this);
 		this.onMove = this.onMove.bind(this);
 		this.onClick = this.onClick.bind(this);
+		this.onKeydown = this.onKeydown.bind(this);
+		this.onKeyup = this.onKeyup.bind(this);
 
 		this.clock = new THREE.Clock();
 		this.cameraPos = new THREE.Vector3(_utilsConfig2['default'].camera.position.x, _utilsConfig2['default'].camera.position.y, _utilsConfig2['default'].camera.position.z);
 		this.currentCameraPos = new THREE.Vector3(this.cameraPos.x, this.cameraPos.y, this.cameraPos.z);
 		this.plane = null;
 		this.composer = null;
+		this.isSpacebar = false;
 
 		this.cylinders = Array();
 		this.scene = new THREE.Scene();
 		this.container = _utilsConfig2['default'].canvas.element;
 		this.canvas = document.createElement("canvas");
 
-		this.camera = new THREE.PerspectiveCamera(45, this.ratio, 15, 3000);
+		// this.camera 		   = new THREE.PerspectiveCamera(45, this.ratio, 15, 3000);
+		this.camera = new THREE.OrthographicCamera(window.innerWidth / -20, window.innerWidth / 20, window.innerHeight / 20, window.innerHeight / -20, -500, 1000);
 		this.camera.position.x = _utilsConfig2['default'].camera.position.x;
 		this.camera.position.y = _utilsConfig2['default'].camera.position.y;
 		this.camera.position.z = _utilsConfig2['default'].camera.position.z;
@@ -43375,10 +43379,18 @@ module.exports = {
 			cylinderGeometry.computeFaceNormals();
 
 			for (var j = 0; j < cylinderGeometry.faces.length; j++) {
-				this.setFaceColor(cylinderGeometry.faces[j]);
+				this.setFaceColor(cylinderGeometry.faces[j], cylinderConfig.inverted);
 			}
 
 			var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+
+			cylinder.rotateX(cylinderConfig.rotX);
+			cylinder.rotateY(cylinderConfig.rotY);
+			cylinder.rotateZ(cylinderConfig.rotZ);
+
+			cylinder.position.x = cylinderConfig.x;
+			cylinder.position.y = cylinderConfig.y;
+			cylinder.position.z = cylinderConfig.z;
 
 			this.scene.add(cylinder);
 
@@ -43396,14 +43408,24 @@ module.exports = {
 
 		window.addEventListener('resize', this.onResize);
 		window.addEventListener('mousemove', this.onMove);
+		window.addEventListener('keydown', this.onKeydown);
+		window.addEventListener('keyup', this.onKeyup);
 		window.addEventListener('click', this.onClick);
 	},
 
-	setFaceColor: function setFaceColor(face) {
-		console.log('mwellow', face.normal.dot(new THREE.Vector3(0, 0, 1)));
-
-		if (face.normal.dot(new THREE.Vector3(0, 0, 1)) === 0) {
-			face.color = THREE.Vector3(0, 0, 0);
+	setFaceColor: function setFaceColor(face, inverted) {
+		if (inverted) {
+			if (face.normal.dot(new THREE.Vector3(0, 0, 1)) === 0) {
+				face.color.setRGB(_utilsConfig2['default'].black.r, _utilsConfig2['default'].black.g, _utilsConfig2['default'].black.b);
+			} else {
+				face.color.setRGB(_utilsConfig2['default'].white.r, _utilsConfig2['default'].white.g, _utilsConfig2['default'].white.b);
+			}
+		} else {
+			if (face.normal.dot(new THREE.Vector3(0, 0, 1)) === 0) {
+				face.color.setRGB(_utilsConfig2['default'].white.r, _utilsConfig2['default'].white.g, _utilsConfig2['default'].white.b);
+			} else {
+				face.color.setRGB(_utilsConfig2['default'].black.r, _utilsConfig2['default'].black.g, _utilsConfig2['default'].black.b);
+			}
 		}
 	},
 
@@ -43412,6 +43434,16 @@ module.exports = {
 	onMove: function onMove(event) {
 		this.cameraPos.x = event.clientX - this.halfWidth;
 		this.cameraPos.y = event.clientY - this.halfHeight;
+	},
+
+	onKeydown: function onKeydown(event) {
+		if (event.keyCode == 32 && !this.isSpacebar) {
+			this.isSpacebar = true;
+		}
+	},
+
+	onKeyup: function onKeyup(event) {
+		if (this.isSpacebar) this.isSpacebar = false;
 	},
 
 	onResize: function onResize() {
@@ -43431,8 +43463,20 @@ module.exports = {
 	render: function render() {
 		var delta = this.clock.getDelta();
 
-		this.currentCameraPos.x += (this.cameraPos.x * .7 - this.currentCameraPos.x) * 0.01;
-		this.currentCameraPos.y += (this.cameraPos.y * .8 - this.currentCameraPos.y) * 0.01;
+		if (this.isSpacebar) {
+			this.currentCameraPos.x += (0 - this.currentCameraPos.x) * 0.3;
+			this.currentCameraPos.y += (0 - this.currentCameraPos.y) * 0.3;
+		} else {
+			this.currentCameraPos.x += (this.cameraPos.x * .5 - this.currentCameraPos.x) * 0.01;
+			this.currentCameraPos.y += (this.cameraPos.y * .3 - this.currentCameraPos.y) * 0.01;
+		}
+
+		if (this.currentCameraPos.x > -.2 && this.currentCameraPos.x < .2) {
+			this.currentCameraPos.x = 0;
+		}
+		if (this.currentCameraPos.y > -.2 && this.currentCameraPos.y < .2) {
+			this.currentCameraPos.y = 0;
+		}
 
 		this.camera.position.set(this.currentCameraPos.x, this.currentCameraPos.y, this.currentCameraPos.z);
 		this.camera.lookAt(_utilsConfig2['default'].camera.target);
@@ -43442,7 +43486,7 @@ module.exports = {
 
 };
 
-},{"../utils/config":"/Users/tommy.cornilleau/Desktop/TEMP/c-exp/src/scripts/utils/config.js","../utils/mapper":"/Users/tommy.cornilleau/Desktop/TEMP/c-exp/src/scripts/utils/mapper.js","../utils/raf":"/Users/tommy.cornilleau/Desktop/TEMP/c-exp/src/scripts/utils/raf.js","three":"/Users/tommy.cornilleau/Desktop/TEMP/c-exp/node_modules/three/build/three.js"}],"/Users/tommy.cornilleau/Desktop/TEMP/c-exp/src/scripts/initialize.js":[function(require,module,exports){
+},{"../utils/config":"D:\\Documents\\git\\c-exp\\src\\scripts\\utils\\config.js","../utils/mapper":"D:\\Documents\\git\\c-exp\\src\\scripts\\utils\\mapper.js","../utils/raf":"D:\\Documents\\git\\c-exp\\src\\scripts\\utils\\raf.js","three":"D:\\Documents\\git\\c-exp\\node_modules\\three\\build\\three.js"}],"D:\\Documents\\git\\c-exp\\src\\scripts\\initialize.js":[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -43456,7 +43500,7 @@ window.onload = function () {
 	_componentsScene2['default'].init();
 };
 
-},{"./components/scene":"/Users/tommy.cornilleau/Desktop/TEMP/c-exp/src/scripts/components/scene.js"}],"/Users/tommy.cornilleau/Desktop/TEMP/c-exp/src/scripts/utils/config.js":[function(require,module,exports){
+},{"./components/scene":"D:\\Documents\\git\\c-exp\\src\\scripts\\components\\scene.js"}],"D:\\Documents\\git\\c-exp\\src\\scripts\\utils\\config.js":[function(require,module,exports){
 "use strict";
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj["default"] = obj; return newObj; } }
@@ -43473,7 +43517,7 @@ var config = {
 	},
 
 	camera: {
-		position: new THREE.Vector3(0, 0, 50),
+		position: new THREE.Vector3(0, 0, 80),
 		target: new THREE.Vector3(0, 0, 0)
 	},
 
@@ -43491,21 +43535,163 @@ var config = {
 		z: 0,
 		width: 10,
 		height: 10,
-		depth: 10,
-		rotX: 0,
+		rotX: Math.PI * .5,
+		rotY: 0,
+		rotZ: 0,
+		inverted: true
+	}, {
+		x: 0,
+		y: 0,
+		z: 10,
+		width: 6,
+		height: 2,
+		rotX: Math.PI * .5,
+		rotY: 0,
+		rotZ: 0,
+		inverted: false
+	}, {
+		x: 0,
+		y: 5,
+		z: 40,
+		width: 5,
+		height: 20,
+		rotX: Math.PI * .5,
+		rotY: 0,
+		rotZ: Math.PI * .5,
+		inverted: true
+	}, {
+		x: 5,
+		y: -5,
+		z: 70,
+		width: 10,
+		height: 10,
+		rotX: Math.PI * .5,
+		rotY: 0,
+		rotZ: Math.PI * .5,
+		inverted: true
+	}, {
+		x: 20,
+		y: 10,
+		z: -20,
+		width: 11,
+		height: 10,
+		rotX: Math.PI * .5,
+		rotY: 0,
+		rotZ: 0,
+		inverted: false
+	}, {
+		x: -50,
+		y: -30,
+		z: -10,
+		width: 11,
+		height: 4,
+		rotX: Math.PI * .5,
+		rotY: 0,
+		rotZ: 0,
+		inverted: false
+	}, {
+		x: 50,
+		y: 30,
+		z: 9,
+		width: 11,
+		height: 6,
+		rotX: Math.PI * .5,
+		rotY: 0,
+		rotZ: 0,
+		inverted: false
+	}, {
+		x: -24,
+		y: 40,
+		z: 0,
+		width: 11,
+		height: 6,
+		rotX: Math.PI * .5,
+		rotY: 0,
+		rotZ: 0,
+		inverted: false
+	}, {
+		x: -30,
+		y: 10,
+		z: 30,
+		width: 10,
+		height: 4,
+		rotX: Math.PI,
+		rotY: 0,
+		rotZ: 0,
+		inverted: true
+	}, {
+		x: 25,
+		y: -25,
+		z: -20,
+		width: 9,
+		height: 6,
+		rotX: Math.PI * .5,
+		rotY: 0,
+		rotZ: 0,
+		inverted: false
+	}, {
+		x: 5,
+		y: 45,
+		z: 0,
+		width: 10,
+		height: 7,
+		rotX: Math.PI * .5,
+		rotY: 0,
+		rotZ: 0,
+		inverted: false
+	}, {
+		x: -15,
+		y: -45,
+		z: -30,
+		width: 9,
+		height: 10,
+		rotX: Math.PI * .5,
+		rotY: 0,
+		rotZ: 0,
+		inverted: false
+	}, {
+		x: 30,
+		y: -30,
+		z: 30,
+		width: 10,
+		height: 4,
+		rotX: Math.PI,
+		rotY: 0,
+		rotZ: 0,
+		inverted: true
+	}, {
+		x: -15,
+		y: -45,
+		z: -30,
+		width: 9,
+		height: 10,
+		rotX: Math.PI * .5,
 		rotY: 0,
 		rotZ: 0,
 		inverted: false
 	}],
 
-	radiusSegments: 10,
+	radiusSegments: 100,
 
-	heightSegments: 10
+	heightSegments: 10,
+
+	black: {
+		r: 0,
+		g: 0,
+		b: 0
+	},
+
+	white: {
+		r: 0.9568,
+		g: 0.9294,
+		b: 0.8745
+	}
+
 };
 
 module.exports = config;
 
-},{"three":"/Users/tommy.cornilleau/Desktop/TEMP/c-exp/node_modules/three/build/three.js"}],"/Users/tommy.cornilleau/Desktop/TEMP/c-exp/src/scripts/utils/mapper.js":[function(require,module,exports){
+},{"three":"D:\\Documents\\git\\c-exp\\node_modules\\three\\build\\three.js"}],"D:\\Documents\\git\\c-exp\\src\\scripts\\utils\\mapper.js":[function(require,module,exports){
 // https://github.com/tommycor/mapperJS/blob/master/mapper-min.js
 "use strict";
 
@@ -43515,8 +43701,8 @@ function mapper(val, oMin, oMax, nMin, nMax) {
 
 module.exports = mapper;
 
-},{}],"/Users/tommy.cornilleau/Desktop/TEMP/c-exp/src/scripts/utils/raf.js":[function(require,module,exports){
-'use strict';
+},{}],"D:\\Documents\\git\\c-exp\\src\\scripts\\utils\\raf.js":[function(require,module,exports){
+"use strict";
 
 function Raf() {
 
@@ -43527,7 +43713,7 @@ function Raf() {
 
 	this.toRefresh = [];
 
-	window.addEventListener('keydown', this.control);
+	// window.addEventListener('keydown', this.control);
 }
 
 Raf.prototype.register = function (callback) {
@@ -43564,6 +43750,6 @@ Raf.prototype.control = function (event) {
 
 module.exports = new Raf();
 
-},{}]},{},["/Users/tommy.cornilleau/Desktop/TEMP/c-exp/src/scripts/initialize.js"])
+},{}]},{},["D:\\Documents\\git\\c-exp\\src\\scripts\\initialize.js"])
 
 //# sourceMappingURL=bundle.js.map

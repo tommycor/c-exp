@@ -7,7 +7,7 @@ function Raf() {
 
 	this.toRefresh = [];
 
-	window.addEventListener('keydown', this.control);
+	// window.addEventListener('keydown', this.control);
 
 }
 
