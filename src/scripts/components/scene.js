@@ -89,11 +89,13 @@ module.exports = {
 		raf.register( this.render );
 		raf.start();
 
-		window.addEventListener( 'resize', this.onResize );
-		window.addEventListener( 'mousemove', this.onMove );
-		window.addEventListener( 'keydown', this.onKeydown );
-		window.addEventListener( 'keyup', this.onKeyup );
-		window.addEventListener( 'click', this.onClick );
+		setTimeout( ()=>{
+			window.addEventListener( 'mousemove', this.onMove );
+			window.addEventListener( 'resize', this.onResize );
+			window.addEventListener( 'keydown', this.onKeydown );
+			window.addEventListener( 'keyup', this.onKeyup );
+			window.addEventListener( 'click', this.onClick );
+		}, 2000);
 	},
 
 	setFaceColor: function( face, inverted ) {

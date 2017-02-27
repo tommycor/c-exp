@@ -43326,6 +43326,8 @@ var _utilsMapper2 = _interopRequireDefault(_utilsMapper);
 module.exports = {
 
 	init: function init() {
+		var _this = this;
+
 		this.render = this.render.bind(this);
 		this.onResize = this.onResize.bind(this);
 		this.onMove = this.onMove.bind(this);
@@ -43406,11 +43408,13 @@ module.exports = {
 		_utilsRaf2['default'].register(this.render);
 		_utilsRaf2['default'].start();
 
-		window.addEventListener('resize', this.onResize);
-		window.addEventListener('mousemove', this.onMove);
-		window.addEventListener('keydown', this.onKeydown);
-		window.addEventListener('keyup', this.onKeyup);
-		window.addEventListener('click', this.onClick);
+		setTimeout(function () {
+			window.addEventListener('mousemove', _this.onMove);
+			window.addEventListener('resize', _this.onResize);
+			window.addEventListener('keydown', _this.onKeydown);
+			window.addEventListener('keyup', _this.onKeyup);
+			window.addEventListener('click', _this.onClick);
+		}, 2000);
 	},
 
 	setFaceColor: function setFaceColor(face, inverted) {
